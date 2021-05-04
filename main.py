@@ -44,7 +44,7 @@ def deal_cards(who_is_first, deck):
         my_cards = deck[:4]
         deck = deck[4:]
 
-    return my_cards, opp_cards
+    return my_cards, opp_cards, deck
 
 def print_cards(cards):
     for c in cards:
@@ -90,11 +90,10 @@ def solve_move(cards_on_table, move, whose_move, my_cards, opp_cards, my_taken_c
             if card_played.value == 'J':
                 # print('debug 1')
                 cards_on_table,my_taken_cards, opp_taken_cards, my_points, opp_points = collect_cards(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points)
+        else:
+            cards_on_table, my_taken_cards, opp_taken_cards, my_points, opp_points = collect_cards(cards_on_table,whose_move,my_taken_cards, opp_taken_cards,my_points, opp_points)
     else:
         if (cards_on_table[-1].value == card_played.value) or (card_played.value == 'J'):
-            # print('debug 2')
-            # print(card_played.value)
-            # print(str(card_played))
             cards_on_table.append(card_played)
             cards_on_table,my_taken_cards, opp_taken_cards, my_points, opp_points = collect_cards(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points)
         else:
@@ -106,10 +105,12 @@ def solve_move(cards_on_table, move, whose_move, my_cards, opp_cards, my_taken_c
 
 def collect_cards(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points):
     print('COLLECTION HAPPENS')
+    print('Points before collection: ')
+    print('My points: ' + str(my_points) + ' | Computer points: ' + str(opp_points))
     print_cards_inline(cards_on_table)
     if len(cards_on_table) == 2:
         # check if it is a zing, check if both cards have the same value
-        if cards_on_table[0].value == cards_on_table[1].value:
+        if cards_on_table[0].number == cards_on_table[1].number:
             # it is a zing
             zing_points = 10
             if cards_on_table[1].value == 'J':
@@ -119,16 +120,20 @@ def collect_cards(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, m
             else:
                 opp_points += zing_points
 
-    return transfer_cards_and_points(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points)
+
+    cards_on_table,my_taken_cards, opp_taken_cards, my_points, opp_points =  transfer_cards_and_points(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points)
+    print('Points after collection: ')
+    print('My points: ' + str(my_points) + ' | Computer points: ' + str(opp_points))
+    return cards_on_table,my_taken_cards, opp_taken_cards, my_points, opp_points
 
 def transfer_cards_and_points(cards_on_table, whose_move, my_taken_cards, opp_taken_cards, my_points, opp_points):
     if whose_move == 1:
+        my_points += count_points_from(cards_on_table)
         for i, t in enumerate(cards_on_table):
-            my_points += count_points_from(cards_on_table)
             my_taken_cards.append(t)
     else:
+        opp_points += count_points_from(cards_on_table)
         for i, t in enumerate(cards_on_table):
-            opp_points += count_points_from(cards_on_table)
             opp_taken_cards.append(t)
 
     cards_on_table = []
@@ -137,6 +142,8 @@ def transfer_cards_and_points(cards_on_table, whose_move, my_taken_cards, opp_ta
 def count_points_from(cards):
     pts = 0
     for card in cards:
+        if card.number == 1:
+            pts += 1
         if card.number >= 10 or (card.number == 2 and card.sign == 'club'):
             pts += 1
             if card.number == 10 and card.sign == 'diamond':
@@ -158,6 +165,18 @@ if __name__ == '__main__':
     # opp_points - type int, just the number of opp points
     # card_underneath - it is the last card in the deck. It is visible to both players
 
+    # cards = [
+    #     Card(12, 'Q', 'heart'),
+    #     Card(12, 'Q', 'clubs'),
+    # ]
+
+    # print(count_points_from(cards))
+
+    # CODE COMMENTED BELLOW IS JUST FOR TESTING
+    # cards_on_table, my_taken_cards, opp_taken_cards, my_points, opp_points = collect_cards(cards, 1, my_taken_cards, opp_taken_cards, my_points, opp_points)
+    # print('Points after')
+    # print('Your points: ' + str(my_points))
+    # print('Opponent points: ' + str(opp_points))
 
 
     deck = shuffle_deck(create_deck())
@@ -176,9 +195,13 @@ if __name__ == '__main__':
     print('Cards on the cards_on_table are: ')
     print_cards(cards_on_table)
 
-    my_cards, opponent_cards = deal_cards(who_is_first, deck)
+    my_cards, opponent_cards, deck = deal_cards(who_is_first, deck)
 
     print('To play a card, press 1 for the first, 2 for second, etc....')
+
+    # we use this variable to see who is the last person who took the cards from the table
+    # this is important in order to solve to whom do the cards go at the end of the game
+    last_taken_by = 0
 
     round = 1
     while round <= 6:
@@ -189,26 +212,39 @@ if __name__ == '__main__':
                 print('My Cards are')
                 print_cards_inline(my_cards)
                 my_move = int(input()) - 1
+                prior_length = len(cards_on_table)
                 cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(cards_on_table, my_move, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points)
+                if prior_length > len(cards_on_table):
+                    last_taken_by = 1
                 opp_move = opp_plays(opponent_cards)
                 print('**************************')
                 print('OPPONENT CARDS')
                 print_cards_inline(opponent_cards)
                 print('**************************')
-                print('opp move: ' + str(opp_move))
+                # print('opp move: ' + str(opp_move))
                 print('Oponent plays: ' + str(opponent_cards[opp_move]))
+                prior_length = len(cards_on_table)
                 cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(cards_on_table, opp_move, 2, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points)
+                if prior_length > len(cards_on_table):
+                    last_taken_by = 2
                 print('-------------------------------------------------')
                 print('Now the cards_on_table is:')
                 print_cards_inline(cards_on_table)
 
-                print('++ Your cards are ++')
-                print_cards_inline(my_cards)
         print('Deal the cards....')
-        my_cards, opponent_cards = deal_cards(who_is_first, deck)
+        my_cards, opponent_cards, deck = deal_cards(who_is_first, deck)
+        print('Deck size: ' + str(len(deck)))
         round += 1
 
 
+    # What remains after the last hand goes to the player who last took the cards in the game
+    if len(cards_on_table) > 0:
+        cards_on_table,my_taken_cards, opp_taken_cards, my_points, opp_points = transfer_cards_and_points(cards_on_table, last_taken_by, my_taken_cards, opp_taken_cards, my_points, opp_points)
+
+    if len(my_taken_cards) > len(opp_taken_cards):
+        my_points += 3
+    elif len(my_taken_cards) < len(opp_taken_cards):
+        opp_points += 3
     print('++++++++++++++++++++++++ ROUND FINISHED ++++++++++++++++')
     print('Your points: ' + str(my_points))
     print('Opponent points: ' + str(opp_points))
