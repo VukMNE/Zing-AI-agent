@@ -1,7 +1,7 @@
 from main import count_points_from, create_deck
 from card import Card
 
-def heuristic(cards_on_table, my_cards, treshold, cards_already_played, deck):
+def heuristic_function(cards_on_table, my_cards, treshold, cards_already_played, deck):
     '''
     Heuristic function that evaluate how good each card (currently in hands) is.
     :param cards_on_table: Cards currently on the table
