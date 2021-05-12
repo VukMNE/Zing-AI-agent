@@ -17,6 +17,12 @@ def play_random_vs_heuristic(who_is_first):
         cards_on_table = list()
         card_underneath = deck[-1]
 
+        if my_total_points > 0 or opp_total_points > 0:
+            # we need to switch who plays first everytime the deck gets empty
+            if who_is_first == 1:
+                who_is_first = 2
+            else:
+                who_is_first = 1
         # print('Deck is shuffled. Who plays first? If you go first, type in 1, if computer should go first press 2')
         # who_is_first = int(input())
         # print('Your choice: ' + str(who_is_first))
