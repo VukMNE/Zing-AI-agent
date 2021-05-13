@@ -38,8 +38,7 @@ def play_random_vs_heuristic(who_is_first):
         #     print_cards_inline(cards_on_table)
 
         deck = deck[4:]
-        # print('Cards on the cards_on_table are: ')
-        # print_cards(cards_on_table)
+
 
         my_cards, opponent_cards, deck = deal_cards(who_is_first, deck)
 
@@ -51,14 +50,22 @@ def play_random_vs_heuristic(who_is_first):
 
         round = 1
         while round <= 6:
+            # print('Cards on the cards_on_table are: ')
+            # print_cards_inline(cards_on_table)
             while len(my_cards) + len(opponent_cards) > 0:
                 if who_is_first == 1:
                     # heuristic agent moves first in this hand
-                    prior_length = len(cards_on_table)
+                    # print('--------------------IT IS YOUR MOVE NOW-----------------------------')
+                    # print('My Cards are')
+                    # print_cards_inline(my_cards)
                     heuristic_score = heuristic_function(cards_on_table, my_cards, 3, my_taken_cards + opp_taken_cards,
                                                          deck)
+                    # print('Heuristic scores:')
+                    # print(heuristic_score)
                     my_move = heuristic_score.index(max(heuristic_score))
                     prior_length = len(cards_on_table)
+                    # print('I play')
+                    # print(my_cards[my_move])
                     cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
                         cards_on_table, my_move, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards,
                         my_points, opp_points, False)
@@ -72,6 +79,8 @@ def play_random_vs_heuristic(who_is_first):
                                          my_points, opp_points, show = False)
                     if prior_length > len(cards_on_table):
                         last_taken_by = 2
+                    # print('Cards on the cards_on_table are: ')
+                    # print_cards_inline(cards_on_table)
 
                 else:
                     # computer (agent that makes random moves) moves first in this hand
@@ -82,11 +91,19 @@ def play_random_vs_heuristic(who_is_first):
                                          my_points, opp_points, show = False)
                     if prior_length > len(cards_on_table):
                         last_taken_by = 2
-
-                    prior_length = len(cards_on_table)
+                    # print('Cards on the cards_on_table are: ')
+                    # print_cards_inline(cards_on_table)
+                    # 
+                    # print('--------------------IT IS YOUR MOVE NOW-----------------------------')
+                    # print('My Cards are')
+                    # print_cards_inline(my_cards)
                     heuristic_score = heuristic_function(cards_on_table, my_cards, 3, my_taken_cards + opp_taken_cards,
                                                          deck)
+                    # print('Heuristic scores:')
+                    # print(heuristic_score)
                     my_move = heuristic_score.index(max(heuristic_score))
+                    # print('I play')
+                    # print(my_cards[my_move])
                     prior_length = len(cards_on_table)
                     cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
                         cards_on_table, my_move, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards,
