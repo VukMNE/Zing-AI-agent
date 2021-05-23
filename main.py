@@ -86,9 +86,7 @@ def play_random_vs_heuristic():
             my_points += 3
         elif len(my_taken_cards) < len(opp_taken_cards):
             opp_points += 3
-        # print('++++++++++++++++++++++++ ROUND FINISHED ++++++++++++++++')
-        # print('Your points: ' + str(my_points))
-        # print('Opponent points: ' + str(opp_points))
+
         my_total_points += my_points
         opp_total_points += opp_points
 
