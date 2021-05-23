@@ -1,6 +1,7 @@
 from card import Card
 import random
 
+
 def create_deck():
     deck = list()
     for i in range(1,5):
@@ -70,6 +71,8 @@ def opp_plays(cards):
 def random_choice(cards):
     selected_card_index = random.choice(list(range(len(cards))))
     return selected_card_index
+
+
 
 def solve_move(cards_on_table, move, whose_move, my_cards, opp_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, show = True):
     # checks whether you take, or not
@@ -151,3 +154,64 @@ def count_points_from(cards):
                 pts += 1
 
     return pts
+
+# the function inlcudes printing that enables a human to play the game in console
+# also, the manipulation of deck is done here (transfering the cards from hand to table, etc)
+def i_make_a_move(cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points):
+    print('--------------------IT IS YOUR MOVE NOW-----------------------------')
+    print('My Cards are')
+    print_cards_inline(my_cards)
+    my_move = int(input()) - 1
+    cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
+        cards_on_table, my_move, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points,
+        opp_points)
+    return cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points
+
+# This code didn't work due to the circular import
+# def heuristic_makes_a_move(cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, deck, threshold):
+#     heuristic_score = heuristic_function(cards_on_table, my_cards, 3, my_taken_cards + opp_taken_cards, deck)
+#     my_move = heuristic_score.index(max(heuristic_score))
+#     prior_length = len(cards_on_table)
+#     cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
+#         cards_on_table, my_move, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards,
+#         my_points, opp_points, False)
+#     if prior_length > len(cards_on_table):
+#         last_taken_by = 1
+#
+#     return cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points
+
+
+
+# the function inlcudes printing that enables a human to play the game in console
+# also, the manipulation of deck is done here (transfering the cards from hand to table, etc)
+def opp_makes_a_move(cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, show = True):
+    opp_move = opp_plays(opponent_cards)
+    if show:
+        print('**************************')
+        print('OPPONENT CARDS')
+        print_cards_inline(opponent_cards)
+        print('**************************')
+        # print('opp move: ' + str(opp_move))
+        print('Oponent plays: ' + str(opponent_cards[opp_move]))
+    prior_length = len(cards_on_table)
+    cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
+        cards_on_table, opp_move, 2, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points,
+        opp_points, show)
+
+    return cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points
+
+def h2_makes_a_move(cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, show = True):
+    opp_move = opp_plays(opponent_cards)
+    if show:
+        print('**************************')
+        print('OPPONENT CARDS')
+        print_cards_inline(opponent_cards)
+        print('**************************')
+        # print('opp move: ' + str(opp_move))
+        print('Oponent plays: ' + str(opponent_cards[opp_move]))
+    prior_length = len(cards_on_table)
+    cards_on_table, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points = solve_move(
+        cards_on_table, opp_move, 2, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points,
+        opp_points, show)
+
+    return cards_on_table, my_cards,opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points
