@@ -1,6 +1,6 @@
 from utils import *
 from Heuristic import *
-
+from monte_carlo_search import *
 
 def play_random_vs_heuristic(who_is_first):
     '''
@@ -408,13 +408,37 @@ def play():
 
 
 if __name__ == '__main__':
-    wins = 0
-    n = 10000
-    for _ in range(n):
-        plays_first = (_ % 2) + 1
-        wins += play_h1_vs_h2(plays_first)
-    print(f"Wins: {wins/n}")
+    # wins = 0
+    # n = 10000
+    # for _ in range(n):
+    #     plays_first = (_ % 2) + 1
+    #     wins += play_h1_vs_h2(plays_first)
+    # print(f"Wins: {wins/n}")
 
+    my_points, opp_points = 0, 0
+    my_taken_cards = list()
+    opp_taken_cards = list()
+
+    deck = shuffle_deck(create_deck())
+    cards_on_table = deck[:4]
+    deck = deck[4:]
+
+    my_cards, opponent_cards, deck = deal_cards(1, deck)
+
+
+    initial_state = ZingGameState(deck, cards_on_table, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, 0)
+
+    root = MonteCarloTreeSearchNode(state=initial_state)
+    selected_node = root.best_action()
+
+    print('Cards on table:')
+    print_cards_inline(cards_on_table)
+
+    print('My cards are: ')
+    print_cards_inline(my_cards)
+
+    print('Suggested move: ')
+    selected_node.state.print_state()
 
 
     # play()
