@@ -3,7 +3,7 @@ from Heuristic import *
 from monte_carlo import *
 
 
-def play_monte_carlo_vs_random(who_is_first):
+def play_monte_carlo_vs_random(n,who_is_first):
     '''
     This plays a game where one player randomly chooses cards and the other plays the best card according to heuristic function.
     Player wins when he reaches at least 101 points.
@@ -59,10 +59,12 @@ def play_monte_carlo_vs_random(who_is_first):
                     # print('--------------------IT IS YOUR MOVE NOW-----------------------------')
                     # print('My Cards are')
                     # print_cards_inline(my_cards)
-                    monte_carlo_card = monte_carlo_best_card(None, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opponent_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
-
-                    # print('Monte carlo:')
-                    # print(heuristic_score)
+                    try:
+                        monte_carlo_card = monte_carlo_best_card(n,None, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opponent_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
+                    except:
+                        a=3
+                    ##print('Monte carlo:')
+                    #print(monte_carlo_card)
                     my_move = monte_carlo_card
                     prior_length = len(cards_on_table)
                     # print('I play')
@@ -98,13 +100,16 @@ def play_monte_carlo_vs_random(who_is_first):
                     # print('--------------------IT IS YOUR MOVE NOW-----------------------------')
                     # print('My Cards are')
                     # print_cards_inline(my_cards)
-                    monte_carlo_card = monte_carlo_best_card(None, deck, cards_on_table, my_points, my_cards,
+                    try:
+                        monte_carlo_card = monte_carlo_best_card(n,None, deck, cards_on_table, my_points, my_cards,
                                                              my_total_points, my_taken_cards, opp_points, opponent_cards,
-                                                             opp_total_points, opp_taken_cards, who_is_first,
+                                                             opp_total_points, opp_taken_cards, 0,
                                                              last_taken_by)
+                    except:
+                        a=3
 
-                    # print('Heuristic scores:')
-                    # print(heuristic_score)
+                    #print('Monte carlo 2:')
+                    #print(monte_carlo_card)
                     my_move = monte_carlo_card
                     # print('I play')
                     # print(my_cards[my_move])
@@ -552,10 +557,12 @@ def play():
 
 if __name__ == '__main__':
     wins = 0
-    n = 10000
+    n = 100
+    m = 10
     for _ in range(n):
+        print(_)
         plays_first = (_ % 2) + 1
-        wins += play_monte_carlo_vs_random(plays_first)
+        wins += play_monte_carlo_vs_random(m,plays_first)
     print(f"Wins: {wins/n}")
 
 

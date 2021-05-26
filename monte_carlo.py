@@ -42,14 +42,45 @@ class ZingGameState(TwoPlayersAbstractGameState):
     @property
     def game_result(self):
         # check if game is over
-
+        '''
         if self.my_total_points >= 101:
             #print('I won')
             return self.player_0
 
         elif self.opp_total_points >= 101:
             #print('Opp won')
-            return self.player_1
+            return self.player_1'''
+        last_taken_by = copy.deepcopy(self.last_taken_by)
+        round = copy.deepcopy(self.round)
+        deck = copy.deepcopy(self.deck)
+        my_total_points = copy.deepcopy(self.my_total_points)
+        opp_total_points = copy.deepcopy(self.opp_total_points)
+        my_taken_cards = copy.deepcopy(self.my_taken_cards)
+        opp_taken_cards = copy.deepcopy(self.opp_taken_cards)
+        my_points = copy.deepcopy(self.my_points)
+        opp_points = copy.deepcopy(self.opp_points)
+        my_cards = copy.deepcopy(self.my_cards)
+        opp_cards = copy.deepcopy(self.opp_cards)
+        next_to_move = copy.deepcopy(self.next_to_move)
+        cards_on_table = copy.deepcopy(self.cards_on_table)
+        who_is_first = copy.deepcopy(self.who_is_first)
+        if len(self.deck) == 0 and len(self.my_cards) == 0 and len(self.opp_cards) == 0:
+            if len(self.cards_on_table) > 0:
+                cards_on_table, my_taken_cards, opp_taken_cards, my_points, opp_points = transfer_cards_and_points(
+                    cards_on_table, last_taken_by, my_taken_cards, opp_taken_cards, my_points, opp_points)
+
+            if len(my_taken_cards) > len(opp_taken_cards):
+                my_points += 3
+            elif len(my_taken_cards) < len(opp_taken_cards):
+                opp_points += 3
+
+            if my_points > opp_points:
+                #print('I won')
+                return self.player_0
+            else:
+                #print('Opp won')
+                return self.player_1
+
 
         # if not over - no result
         return None
@@ -97,6 +128,7 @@ class ZingGameState(TwoPlayersAbstractGameState):
             round += 1
 
         #if the deck is empty
+        '''
         if len(my_cards)==0 and len(opp_cards) == 0 and len(deck) == 0:
             #if there are card on the table
             if len(cards_on_table) > 0:
@@ -127,12 +159,15 @@ class ZingGameState(TwoPlayersAbstractGameState):
             my_cards, opp_cards, deck = deal_cards(who_is_first, deck)
             last_taken_by = 0
 
-            round = 1
+            round = 1'''
 
         if next_to_move == 0:
             next_to_move = 1
         else:
             next_to_move = 0
+
+        if len(my_cards) == 0 and len(opp_cards) == 0 and len(deck) == 0:
+            a=3
 
         return ZingGameState(previous_move, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opp_cards, opp_total_points, opp_taken_cards, next_to_move, last_taken_by, 1, round)
 
@@ -146,14 +181,14 @@ class ZingGameState(TwoPlayersAbstractGameState):
             for card in cards
         ]
 
-def monte_carlo_best_card(best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by):
+def monte_carlo_best_card(n,best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by):
     '''Returns the index of the best card, that should be played according to monte carlo simulation'''
     initial = ZingGameState(best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards,
                             opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
 
     root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial)
     mcts = MonteCarloTreeSearch(root)
-    best_node = mcts.best_action(1000)
+    best_node = mcts.best_action(n)
     move = best_node.state.previous_move
     return move
 
@@ -167,7 +202,7 @@ if __name__ == '__main__':
     #cards_on_table = list()
     card_underneath = deck[-1]
 
-    who_is_first = 1
+    who_is_first = 2
 
     cards_on_table = deck[:4]
     deck = deck[4:]
@@ -184,5 +219,5 @@ if __name__ == '__main__':
 
     root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial)
     mcts = MonteCarloTreeSearch(root)
-    best_node = mcts.best_action(10)
+    best_node = mcts.best_action(100)
     move = best_node.state.previous_move
