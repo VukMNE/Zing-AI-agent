@@ -3,7 +3,7 @@ from Heuristic import *
 from monte_carlo import *
 
 
-def play_monte_carlo_vs_random(n,who_is_first):
+def play_monte_carlo_vs_random(n,seconds,who_is_first):
     '''
     This plays a game where one player randomly chooses cards and the other plays the best card according to heuristic function.
     Player wins when he reaches at least 101 points.
@@ -60,7 +60,7 @@ def play_monte_carlo_vs_random(n,who_is_first):
                     # print('My Cards are')
                     # print_cards_inline(my_cards)
                     try:
-                        monte_carlo_card = monte_carlo_best_card(n,None, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opponent_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
+                        monte_carlo_card = monte_carlo_best_card(n,seconds,None, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opponent_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
                     except:
                         a=3
                     ##print('Monte carlo:')
@@ -101,7 +101,7 @@ def play_monte_carlo_vs_random(n,who_is_first):
                     # print('My Cards are')
                     # print_cards_inline(my_cards)
                     try:
-                        monte_carlo_card = monte_carlo_best_card(n,None, deck, cards_on_table, my_points, my_cards,
+                        monte_carlo_card = monte_carlo_best_card(n,seconds,None, deck, cards_on_table, my_points, my_cards,
                                                              my_total_points, my_taken_cards, opp_points, opponent_cards,
                                                              opp_total_points, opp_taken_cards, 0,
                                                              last_taken_by)
@@ -557,12 +557,13 @@ def play():
 
 if __name__ == '__main__':
     wins = 0
-    n = 100
-    m = 10
+    n = 10
+    m = None
+    seconds = 0.5
     for _ in range(n):
         print(_)
         plays_first = (_ % 2) + 1
-        wins += play_monte_carlo_vs_random(m,plays_first)
+        wins += play_monte_carlo_vs_random(m,seconds,plays_first)
     print(f"Wins: {wins/n}")
 
 

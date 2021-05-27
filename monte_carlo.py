@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from mctspy.games.common import TwoPlayersAbstractGameState, AbstractGameAction
 from utils import *
 from mctspy.tree.nodes import TwoPlayersGameMonteCarloTreeSearchNode
@@ -181,14 +182,14 @@ class ZingGameState(TwoPlayersAbstractGameState):
             for card in cards
         ]
 
-def monte_carlo_best_card(n,best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by):
+def monte_carlo_best_card(n,seconds,best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards, opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by):
     '''Returns the index of the best card, that should be played according to monte carlo simulation'''
     initial = ZingGameState(best_previous, deck, cards_on_table, my_points, my_cards, my_total_points, my_taken_cards,
                             opp_points, opp_cards, opp_total_points, opp_taken_cards, who_is_first, last_taken_by)
 
     root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial)
     mcts = MonteCarloTreeSearch(root)
-    best_node = mcts.best_action(n)
+    best_node = mcts.best_action(n, seconds)
     move = best_node.state.previous_move
     return move
 
@@ -219,5 +220,8 @@ if __name__ == '__main__':
 
     root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial)
     mcts = MonteCarloTreeSearch(root)
-    best_node = mcts.best_action(100)
+    t1 = time.time()
+    best_node = mcts.best_action(None, 0.5)
+    t2= time.time()
+    print(t2-t1)
     move = best_node.state.previous_move
