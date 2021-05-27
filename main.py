@@ -426,7 +426,7 @@ if __name__ == '__main__':
     my_cards, opponent_cards, deck = deal_cards(1, deck)
 
 
-    initial_state = ZingGameState(deck, cards_on_table, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, 0)
+    initial_state = ZingGameState(deck, cards_on_table, 1, 1, my_cards, opponent_cards, my_taken_cards, opp_taken_cards, my_points, opp_points, 0)
 
     root = MonteCarloTreeSearchNode(state=initial_state)
     selected_node = root.best_action()
