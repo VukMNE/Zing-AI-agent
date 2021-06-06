@@ -75,19 +75,7 @@ class ZingGameState(TwoPlayersAbstractGameState):
             elif len(my_taken_cards) < len(opp_taken_cards):
                 opp_points += 3
 
-            if my_points > opp_points:
-                # print('Deck length: ' + str(len(self.deck)))
-                # print('Me: ' + str(my_points))
-                # print('Com: ' + str(opp_points))
-                # print('------------------')
-                return my_points - opp_points
-                # return self.player_0
-            elif my_points > opp_points:
-                # print('Deck length: ' + str(len(self.deck)))
-                # print('Me: ' + str(my_points))
-                # print('Com: ' + str(opp_points))
-                # print('------------------')
-                #print('Opp won')
+            if my_points != opp_points:
                 return my_points - opp_points
             else:
                 return len(my_taken_cards) - len(opp_taken_cards)

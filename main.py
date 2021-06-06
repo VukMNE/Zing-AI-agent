@@ -157,10 +157,10 @@ def play_monte_carlo_vs_random(n,seconds,who_is_first):
         opp_total_points = opp_total_points + opp_points
 
 
-    # print('Game finished')
-    # print('Heuristic points: ' + str(my_total_points))
-    # print('Random agent points: ' + str(opp_total_points))
-    # print('------------------------')
+    print('Game finished')
+    print('Monte-Carlo points: ' + str(my_total_points))
+    print('Random agent points: ' + str(opp_total_points))
+    print('------------------------')
     if my_total_points > opp_total_points:
         return 1
     return 0
@@ -721,10 +721,11 @@ if __name__ == '__main__':
         s = time.time()
         plays_first = (_ % 2) + 1
         # wins += play_monte_carlo_vs_random(m,seconds,plays_first)
-        wins += play_monte_carlo_vs_random(100, None, plays_first)
+        wins += play_monte_carlo_vs_random(10000, None, plays_first)
         e = time.time()
         time_spent = e - s
         print('Game finished, time spent: ' + str(time_spent))
+        print('Current win ratio: ' + str(wins) + ' / ' + str(_ + 1))
     print(f"Wins: {wins/n}")
 
     # state = np.zeros((3, 3))
