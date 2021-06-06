@@ -30,7 +30,7 @@ class ZingGameState(TwoPlayersAbstractGameState):
         self.my_total_points = my_total_points
         self.my_taken_cards = my_taken_cards
         self.opp_points = opp_points
-        self.opp_cards = opp_cards
+        self.opp_cards = get_possible_cards_for_opponent(deck + opp_cards, len(opp_cards))
         self.opp_total_points = opp_total_points
         self.opp_taken_cards = opp_taken_cards
         self.next_to_move = next_to_move
@@ -65,7 +65,7 @@ class ZingGameState(TwoPlayersAbstractGameState):
         next_to_move = copy.deepcopy(self.next_to_move)
         cards_on_table = copy.deepcopy(self.cards_on_table)
         who_is_first = copy.deepcopy(self.who_is_first)
-        if len(self.deck) == 0 and len(self.my_cards) == 0 and len(self.opp_cards) == 0:
+        if len(self.my_cards) == 0 and len(self.opp_cards) == 0:
             if len(self.cards_on_table) > 0:
                 cards_on_table, my_taken_cards, opp_taken_cards, my_points, opp_points = transfer_cards_and_points(
                     cards_on_table, last_taken_by, my_taken_cards, opp_taken_cards, my_points, opp_points)
@@ -76,17 +76,33 @@ class ZingGameState(TwoPlayersAbstractGameState):
                 opp_points += 3
 
             if my_points > opp_points:
-                #print('I won')
-                return self.player_0
-            else:
+                # print('Deck length: ' + str(len(self.deck)))
+                # print('Me: ' + str(my_points))
+                # print('Com: ' + str(opp_points))
+                # print('------------------')
+                return my_points - opp_points
+                # return self.player_0
+            elif my_points > opp_points:
+                # print('Deck length: ' + str(len(self.deck)))
+                # print('Me: ' + str(my_points))
+                # print('Com: ' + str(opp_points))
+                # print('------------------')
                 #print('Opp won')
-                return self.player_1
+                return my_points - opp_points
+            else:
+                return len(my_taken_cards) - len(opp_taken_cards)
+                # return self.player_1
 
 
         # if not over - no result
         return None
 
     def is_game_over(self):
+        # if self.game_result is not None:
+        #     print('Game finished')
+        #     print(self.my_points)
+        #     print(self.opp_points)
+        #     print('---------------')
         return self.game_result is not None
 
 
@@ -106,6 +122,10 @@ class ZingGameState(TwoPlayersAbstractGameState):
         cards_on_table = copy.deepcopy(self.cards_on_table)
         who_is_first = copy.deepcopy(self.who_is_first)
 
+        # if len(opp_cards) == 4:
+        #     print_cards_inline(opp_cards)
+
+
 
 
         if next_to_move == 0:
@@ -121,12 +141,12 @@ class ZingGameState(TwoPlayersAbstractGameState):
             cards_on_table, my_move, next_to_move + 1, my_cards, opp_cards, my_taken_cards, opp_taken_cards,
             my_points, opp_points, False)
         if prior_length > len(cards_on_table):
-            last_taken_by = next_to_move
+            last_taken_by = next_to_move + 1
 
-        #if this was the last card in hand
-        if len(my_cards)==0 and len(opp_cards) == 0 and len(deck) > 0:
-            my_cards, opp_cards, deck = deal_cards(who_is_first, deck)
-            round += 1
+        # if this was the last card in hand
+        # if len(my_cards)==0 and len(opp_cards) == 0 and len(deck) > 0:
+        #     my_cards, opp_cards, deck = deal_cards(who_is_first, deck)
+        #     round += 1
 
         #if the deck is empty
         '''
@@ -191,9 +211,13 @@ def monte_carlo_best_card(n,seconds,best_previous, deck, cards_on_table, my_poin
     mcts = MonteCarloTreeSearch(root)
     best_node = mcts.best_action(n, seconds)
     move = best_node.state.previous_move
+    # print('Deck length at best move: ' + str(len(best_node.state.deck)))
+    # print('Cards available at best move')
+    # print_cards_inline(best_node.state.my_cards)
     return move
 
-
+def get_possible_cards_for_opponent(cards_unknown_to_me, opp_card_len):
+    return random.sample(cards_unknown_to_me, k=opp_card_len)
 
 if __name__ == '__main__':
     my_total_points = 0

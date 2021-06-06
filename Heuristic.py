@@ -2,7 +2,7 @@ from main import count_points_from, create_deck
 from card import Card
 import math
 
-def heuristic_function(cards_on_table, my_cards, threshold, cards_already_played, deck):
+def heuristic_function(cards_on_table, my_cards, opp_cards, threshold, cards_already_played, deck):
     '''
     Heuristic function that evaluate how good each card (currently in hands) is.
     :param cards_on_table: Cards currently on the table
@@ -28,6 +28,9 @@ def heuristic_function(cards_on_table, my_cards, threshold, cards_already_played
     has_J, index = check_for_same_card(my_cards, Card(11,'J', None))
     if has_same_card == False:
         if has_J:
+            if len(cards_on_table) == 0:
+                scores[index] = -10
+                return scores
             # We compute the probability that the opponent will take if we dont play Janez
             # If it is higher than the threshold, than we play it
 
@@ -37,8 +40,10 @@ def heuristic_function(cards_on_table, my_cards, threshold, cards_already_played
 
             for i, o_card in enumerate(other_cards):
                 occurencies = len([_ for _ in cards_already_played if _.number == o_card.number]) + 1
-                probability_opponent_takes += probability_of_opponent_having_the_card(o_card, occurencies, deck)
+                probability_opponent_takes += probability_of_opponent_having_the_card(o_card, occurencies, deck, len(opp_cards))
 
+            occurencies_j = len([_ for _ in cards_already_played if _.value == 'J']) + 1
+            probability_opponent_takes += probability_of_opponent_having_the_card(my_cards[index], occurencies_j, deck, len(opp_cards))
             # print('Prob is:' + str(probability_opponent_takes))
             if probability_opponent_takes >= threshold:
                 scores[index] = 1
@@ -133,9 +138,6 @@ def basic_heuristic_function(cards_on_table, my_cards, threshold, cards_already_
     has_J, index = check_for_same_card(my_cards, Card(11,'J', None))
     if has_same_card == False:
         if has_J:
-            # We compute the probability that the opponent will take if we dont play Janez
-            # If it is higher than the threshold, than we play it
-
             scores[index] = 1
             return scores
 
@@ -258,11 +260,20 @@ def combinations(m, n):
     # (n)
     return math.factorial(n) / (math.factorial(n-m) * math.factorial(m))
 
-def probability_of_opponent_having_the_card(card, total_occurences, deck):
+def probability_of_opponent_having_the_card(card, total_occurences, deck, opp_len):
     # total occurences including the one if we play that card
+    # opp_len is the number of cards in the opponent hand
     possible_occurences = 4 - total_occurences
     if possible_occurences == 0:
         return 0
-
-    return possible_occurences * (combinations(3, len(deck) + 3) / combinations(4, len(deck) + 4))
+    try:
+        if opp_len > 0:
+            return possible_occurences * (combinations(opp_len - 1, len(deck) + opp_len - 1) / combinations(opp_len, len(deck) + opp_len))
+        else:
+            return possible_occurences * (combinations(3, len(deck))) / combinations(4, len(deck))
+    except:
+        # print('opp_len: ' + str(opp_len))
+        # print('deck_len: ' + str(len(deck)))
+        # print('-----------')
+        return 0
 
